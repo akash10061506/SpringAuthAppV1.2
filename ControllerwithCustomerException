@@ -1,0 +1,81 @@
+package com.connection.oracle.testcontroller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.connection.oracle.entity.Person;
+import com.connection.oracle.exception.BusinessException;
+import com.connection.oracle.exception.ControllerException;
+import com.connection.oracle.repository.serviceImpl.PersonDaoServiceImpl;
+
+@RestController
+@RequestMapping("/api")
+public class PersonController {
+
+	@Autowired
+	PersonDaoServiceImpl service;
+
+	@GetMapping("/getpersons")
+	public ResponseEntity<List<Person>> getAllPerson() {
+		List<Person> list = service.getAllEmployees();
+		if (list.size() <= 0)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+		return ResponseEntity.of(Optional.of(list));
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getById(@PathVariable int id) {
+		try {
+			Person person = service.getId(id);
+
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		} catch (BusinessException e) {
+			ControllerException ce = new ControllerException(e.getErrorCode(), e.getErrorMessage());
+			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			ControllerException controllerException = new ControllerException("606",
+					"Something went wrong in controller");
+			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
+		}
+	}
+	// @PostMapping("/person")
+	/*
+	 * Person createOrUpdateEmployee(Person person) { Person update =
+	 * service.save1(person); return update; }
+	 */
+
+	@PostMapping("/person")
+	public ResponseEntity<Person> createOrUpdateEmployee(@RequestBody Person employee) // RequestBody is used to convert
+																						// jason into java object
+			throws ControllerException {
+		Person updated = service.createOrUpdateEmployee(employee);
+		return new ResponseEntity<Person>(updated, new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@DeleteMapping("/{id}")
+	public HttpStatus deleteEmployeeById(@PathVariable("id") int id) throws ControllerException {
+
+		service.deleteEmployeeById(id);
+		return HttpStatus.FORBIDDEN;
+	}
+
+	@GetMapping("/getSalaryabove20k")
+	public List<Person> getSalaryabove() {
+		List<Person> list = service.getSalary();
+		return list;
+	}
+
+}

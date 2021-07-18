@@ -1,0 +1,6 @@
+1.Current api you are testing with postman. Implement code in your project to  test api via swagger api documenation tool.How to implement swagger in your springboot project
+2.Develop more types of REST api with different different pojo's -- done
+3. Provide security to your api via spring security/sprig oauth / when you have a frontend registartion page developed-- pending 
+4. Secure your rest api via jWT-- stuck 
+http://localhost:8055/swagger-ui/-- done 
+Learn basic git commands to maintain code version ---
