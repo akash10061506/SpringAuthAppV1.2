@@ -79,7 +79,8 @@ public class PersonDaoServiceImpl {
 //		List<Person> list1 = new ArrayList();
 //		Predicate<Person> p = e -> e.getSalary() > 20000;
 //		for (Person p1 : list) {
-//			if (p.test(p1))
+//			if (p.test(p1))  list.toStream().(i->i.getSalary()>2000).collect(Collectors.toList())
+		
 //				list1.add(p1);
 //
 //		}
