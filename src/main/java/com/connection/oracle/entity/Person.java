@@ -22,28 +22,10 @@ public class Person {
 	@GeneratedValue
 	private int id;
 	private String name;
-	private String location;
-	private Long salary; // we take Long here instead of long to check sarlary m null to ni hai
-//	 {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	private String password;
+	private Long salary;
+	private String userName;
+	
+	
 
-	// public Person() // with connecting to DB we have to keep one default
-	// constructor
-	// {
-	//
-	// }
-	//
-	// public Person(String name, String location, long salary) {
-	// this.name = name;
-	// this.location = location;
-	// this.salary = salary;
-	// }
-
-	// @Override
-	// public String toString() {
-	// return "Person [id=" + id + ", name=" + name + ", location=" + location + ",
-	// salary=" + salary + "]";
-	// }
 }

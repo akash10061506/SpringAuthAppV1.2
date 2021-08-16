@@ -1,11 +1,15 @@
 package com.connection.oracle.repository.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import org.springframework.security.core.userdetails.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.connection.oracle.entity.Person;
@@ -13,20 +17,19 @@ import com.connection.oracle.exception.EmptyFieldException;
 import com.connection.oracle.repository.service.PersonSpringDataRepository;
 
 @Service
-public class PersonDaoServiceImpl {
+public class PersonDaoServiceImpl implements  UserDetailsService
+{
 	@Autowired
 	PersonSpringDataRepository repository;
 
-//	@Override
-//	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-//		if (userName.equals("Akash")) {
-//			return new User("Akash", "Akash123", new ArrayList<>()); // This arraylist is for rolls and premission
-//		} else {
-//			throw new UsernameNotFoundException("user not found !!");
-//		}
-//
-//		// ese call karke authection details load hoti hai
-//	}
+	 @Override
+	    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	        Person user = repository.findByUserName(username);
+	        return new User(user.getUserName(), user.getPassword(), new ArrayList<>());
+	    }
+
+		// ese call karke authection details load hoti hai
+	
 
 	public List<Person> getAllEmployees() {
 		List<Person> list = null;
@@ -50,7 +53,8 @@ public class PersonDaoServiceImpl {
 			Person newEntity = employee.get();
 			newEntity.setId(entity.getId());
 			newEntity.setName(entity.getName());
-			newEntity.setLocation(entity.getLocation());
+			newEntity.setUserName(entity.getUserName());
+			newEntity.setPassword(entity.getPassword());
 			newEntity.setSalary(entity.getSalary());
 			newEntity = repository.save(newEntity);
 

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 //import org.springframework.security.authentication.AuthenticationManager;
 //import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 //import org.springframework.security.core.userdetails.UserDetails;
@@ -19,11 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.connection.oracle.entity.JwtRequest;
-import com.connection.oracle.entity.JwtResponse;
+import com.connection.oracle.entity.AuthRequest;
 import com.connection.oracle.entity.Person;
-//import com.connection.oracle.jwtHelper.JwtUtil;
-//import com.connection.oracle.repository.serviceImpl.MyUserDetailsService;
+import com.connection.oracle.jwtHelper.JwtUtil;
 import com.connection.oracle.repository.serviceImpl.PersonDaoServiceImpl;
 
 @RestController
@@ -32,47 +32,26 @@ public class PersonController {
 
 @Autowired
 	PersonDaoServiceImpl service;
-//
-//	@Autowired
-//	JwtUtil jwtHelper;
-//
-//	@Autowired
-//	MyUserDetailsService service1;
-//
-//	@Autowired
-//	private AuthenticationManager authenticationManager;
 
-//	@RequestMapping("/")
-//	public String getHomePage(Model model) {
-//		model.addAttribute("successMsg", "Welcome to My Code");
-//
-//		return "Homepage";
-//	}
+	@Autowired
+	JwtUtil jwtUtil;
 
-//	@PostMapping("/token")
-//	public ResponseEntity<?> generateToken(@RequestBody JwtRequest jwtRequest) throws Exception {
-//		System.out.println(jwtRequest);
-//
-//		try {
-//			authenticationManager.authenticate(
-//					new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
-//		}
-//
-//		catch (UsernameNotFoundException e) {
-//			e.printStackTrace();
-//			throw new Exception("Bad Credentials");
-//
-//		}
 
-		// fine area then below line will excute
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-//		UserDetails userDetails = service1.loadUserByUsername(jwtRequest.getUsername()); // here we will get user
-//																							// details
-//		String token = jwtHelper.generateToken(userDetails);
-//		System.out.println("Jwt token" + token);
-//
-//		return ResponseEntity.ok(new JwtResponse(token));
-//	}
+
+@PostMapping("/authenticate")
+public String generateToken(@RequestBody AuthRequest authRequest) throws Exception {
+    try {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword())
+        );
+    } catch (Exception ex)  {
+        throw new Exception("inavalid username/password");
+    }
+    return jwtUtil.generateToken(authRequest.getUserName());
+}
 
 	@GetMapping("/getpersons")
 	public ResponseEntity<List<Person>> getAllPerson() { // List of person
